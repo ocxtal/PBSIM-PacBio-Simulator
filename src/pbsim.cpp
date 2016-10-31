@@ -1157,7 +1157,8 @@ int simulate_by_sampling() {
         }
 
         if (mutate() == FAILED) {
-          return FAILED;
+          continue;
+          // return FAILED;
         }
 
         sim.res_num ++;
@@ -1453,7 +1454,8 @@ int simulate_by_model() {
     mut.qc[num] = '\0';
 
     if (mutate() == FAILED) {
-      return FAILED;
+      continue;
+      // return FAILED;
     }
 
     len = strlen(mut.new_seq);
@@ -1697,8 +1699,17 @@ int mutate() {
   if (len >= ref.len) {
     offset = 0;
     len = ref.len;
+    for (i=0; i<len; i++) {
+      if (toupper(ref.seq[offset + i]) == 'N') return FAILED;
+    }
   } else {
-    offset = rand() % (ref.len - len + 1);
+    i = 0;
+    while (i != len) {
+      offset = rand() % (ref.len - len + 1);
+      for (i=0; i<len; i++) {
+        if (toupper(ref.seq[offset + i]) == 'N') break;
+      }
+    }
   }
 
   mut.seq_left = offset + 1;
