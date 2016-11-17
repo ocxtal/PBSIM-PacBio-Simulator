@@ -1285,7 +1285,7 @@ int simulate_by_model() {
   long start_wk, end_wk;
   long index;
   long accuracy_min, accuracy_max;
-  char id[128];
+  char id[128], com[128];
   int digit_num1[4], digit_num2[4], digit_num[4];
 
   for (i=0; i<=sim.len_max; i++) {
@@ -1481,7 +1481,8 @@ int simulate_by_model() {
     freq_accuracy[accuracy] ++;
 
     sprintf(id, "S%ld_%ld", ref.num, sim.res_num);
-    fprintf(fp_fq, "@%s\n%s\n+%s\n%s\n", id, mut.new_seq, id, mut.new_qc);
+    sprintf(com, "id=%f len=%ld", (double)accuracy / 100000.0, len);
+    fprintf(fp_fq, "@%s %s\n%s\n+%s %s\n%s\n", id, com, mut.new_seq, id, com, mut.new_qc);
 
     digit_num1[0] = 3;
     digit_num2[0] = 1 + count_digit(sim.res_num);
@@ -1499,7 +1500,7 @@ int simulate_by_model() {
     digit_num2[3] = count_digit(len);
     digit_num[3] = (digit_num1[3] >= digit_num2[3]) ? digit_num1[3] : digit_num2[3];
 
-    fprintf(fp_maf, "a\ns ref");
+    fprintf(fp_maf, "a %s\ns ref", com);
     while (digit_num1[0] ++ < digit_num[0]) {
       fprintf(fp_maf, " ");
     }
@@ -1924,6 +1925,8 @@ long get_time() {
 ///////////////////////////////////////
 
 void print_help() {
+  fprintf(stderr, "\n");
+  fprintf(stderr, "  pbsim version 1.0.3 (modified 2 w/ N skip and id/len info)\n");
   fprintf(stderr, "\n");
   fprintf(stderr, "USAGE: pbsim [options] <reference>\n\n");
   fprintf(stderr, " <reference>           FASTA format file.\n");
